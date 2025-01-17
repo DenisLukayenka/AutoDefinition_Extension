@@ -61,9 +61,10 @@ class CardContent {
         const maskedExample = example.replace(/<b>.*?<\/b>/, '...');
         const sanitizedExample = example.replace('<b>', '').replace('</b>', '');
         this.questionElement.value = `(${definition.type}) ${definition.definition}\n${maskedExample}`;
+        this.questionElement.dispatchEvent(new window.Event('change', {'bubbles': true}));
 
-        this.answerElement.value =
-          this.answerElement.value + '\n' + sanitizedExample;
+        this.answerElement.value = this.answerElement.value + '\n' + sanitizedExample;
+        this.answerElement.dispatchEvent(new window.Event('change', {'bubbles': true}));
       })
       .finally(() => {
         this.autoFillButton.textContent = 'Auto fill';
@@ -125,16 +126,18 @@ function buildCardContents() {
   return cardContents || [];
 }
 
-let cardContents = buildCardContents();
+setTimeout(() => {
+	let cardContents = buildCardContents();
 
-Array.from(document.getElementsByClassName('new-card-button')).forEach(
-  (newCardButton) => {
-    newCardButton.addEventListener('click', () => {
-      setTimeout(() => {
-        const textareas = getCardAnswerTextAreaInputs();
-        const newTextArea = textareas[textareas.length - 1];
-        cardContents.push(new CardContent(newTextArea));
-      }, 100);
-    });
-  }
-);
+	Array.from(document.getElementsByClassName('add-button')).forEach(
+  	(newCardButton) => {
+    	newCardButton.addEventListener('click', () => {
+      		setTimeout(() => {
+        		const textareas = getCardAnswerTextAreaInputs();
+        		const newTextArea = textareas[textareas.length - 1];
+        		cardContents.push(new CardContent(newTextArea));
+      		}, 3000);
+    		});
+  	});
+}, 5000);
+
