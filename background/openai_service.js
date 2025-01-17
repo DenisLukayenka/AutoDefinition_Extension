@@ -1,12 +1,11 @@
-const openAiFunctionUrl = '';
-const openAiQuery = '';
+import secrets from './secrets';
 
 function callOpenAiDefinition(request, sender, sendResponse) {
   (async () => {
     try {
       const encodedSentence = encodeURI(request.sentence);
       const definitionsResponse = await fetch(
-        openAiFunctionUrl + encodedSentence + openAiQuery
+        secrets.openAiServiceUrl + encodedSentence + secrets.openAiServiceQuery
       );
       const definitions = await definitionsResponse.json();
 
