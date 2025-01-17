@@ -1,0 +1,21 @@
+{
+  "name": "Explainer",
+  "description": "Extension for explaining words",
+  "version": "1.0",
+  "manifest_version": 3,
+  "action": {
+    "default_popup": "popup/popup.html",
+    "default_icon": "icons/test-512.png"
+  },
+  "content_scripts": [
+    {
+      "matches": ["https://www.brainscape.com/l/dashboard/*", "file:///C:/*"],
+      "js": ["/scripts/content.js", "/scripts/openai.js"]
+    }
+  ],
+  "background": {
+    "service_worker": "./background/service_worker.js",
+    "type": "module"
+  },
+  "permissions": ["tabs", "activeTab"]
+}
