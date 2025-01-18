@@ -1,12 +1,8 @@
-import secrets from './secrets';
-
-function callOpenAiDefinition(request, sender, sendResponse) {
+function callOpenAiDefinition(request, url, code, sendResponse) {
   (async () => {
     try {
       const encodedSentence = encodeURI(request.sentence);
-      const definitionsResponse = await fetch(
-        secrets.openAiServiceUrl + encodedSentence + secrets.openAiServiceQuery
-      );
+      const definitionsResponse = await fetch(url + encodedSentence + code);
       const definitions = await definitionsResponse.json();
 
       return sendResponse(definitions);

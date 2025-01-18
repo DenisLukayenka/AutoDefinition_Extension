@@ -1,4 +1,4 @@
-function getDefinitions(sentence) {
+function getDefinition(sentence) {
   const message = {
     type: 'OpenAiGetDefinition',
     sentence: sentence,
@@ -7,7 +7,7 @@ function getDefinitions(sentence) {
   return new Promise((resolve, reject) => {
     (async () => {
       await chrome.runtime.sendMessage(message, function (response) {
-        resolve(response?.definitions || []);
+        resolve(response?.definitions[0] || []);
       });
     })();
   });
