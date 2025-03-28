@@ -10,7 +10,15 @@
   "content_scripts": [
     {
       "matches": ["https://www.brainscape.com/l/dashboard/*", "file:///C:/*"],
-      "js": ["/scripts/content.js", "/scripts/openai.js"]
+      "js": ["/scripts/brainscape-autofill.js", "/scripts/openai.js"]
+    },
+    {
+      "matches": ["https://learn.supermemo.com/en/app/my-learning/editor/*"],
+      "js": [
+        "/scripts/openai.js",
+        "/scripts/card-content.js",
+        "/scripts/supermemo-autofill.js"
+      ]
     }
   ],
   "background": {
