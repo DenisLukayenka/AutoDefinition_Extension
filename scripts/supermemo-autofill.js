@@ -1,3 +1,5 @@
+let autofillBootstrapper;
+
 setTimeout(() => {
   CardContent.prototype.placeAutoFillButton = function (
     container,
@@ -23,7 +25,8 @@ setTimeout(() => {
     return container;
   };
 
-  new SupermemoAutoFillBootstrap().init();
+  autofillBootstrapper = new SupermemoAutoFillBootstrap();
+  autofillBootstrapper.init();
 }, 3000);
 
 class SupermemoAutoFillBootstrap {
@@ -39,6 +42,21 @@ class SupermemoAutoFillBootstrap {
       this.resetCards();
       this.subscribeOnNewCardAdded();
     }, SupermemoAutoFillBootstrap.InitialTimeout);
+
+    window.document.querySelector('.cdk-virtual-scroll-viewport').addEventListener('scrollend', function () {
+      console.log('Content scrolled, resetting!');
+      setTimeout(() => autofillBootstrapper.resetCards(), 0);
+    });
+
+    chrome.runtime.onMessage.addListener(
+      function (request) {
+        if (request.type === 'CARDS_LOADED') {
+          console.log('Autofill is going to be resetted!');
+
+          setTimeout(() => autofillBootstrapper.resetCards(), 0);
+        }
+      }
+    );
   }
 
   resetCards() {

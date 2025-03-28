@@ -9,11 +9,19 @@
   },
   "content_scripts": [
     {
-      "matches": ["https://www.brainscape.com/l/dashboard/*", "file:///C:/*"],
-      "js": ["/scripts/brainscape-autofill.js", "/scripts/openai.js"]
+      "matches": [
+        "https://www.brainscape.com/l/dashboard/*",
+        "file:///C:/*"
+      ],
+      "js": [
+        "/scripts/brainscape-autofill.js",
+        "/scripts/openai.js"
+      ]
     },
     {
-      "matches": ["https://learn.supermemo.com/en/app/my-learning/editor/*"],
+      "matches": [
+        "https://learn.supermemo.com/en/app/my-learning/editor/*"
+      ],
       "js": [
         "/scripts/openai.js",
         "/scripts/card-content.js",
@@ -23,7 +31,14 @@
   ],
   "background": {
     "service_worker": "./background/service_worker.js",
-    "type": "module"
+    "type": "module",
+    "scripts": [
+      "./background/service_worker.js"
+    ]
   },
-  "permissions": ["tabs", "activeTab"]
+  "permissions": [
+    "tabs",
+    "activeTab",
+    "webRequest"
+  ]
 }
