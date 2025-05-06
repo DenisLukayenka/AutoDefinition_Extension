@@ -23,8 +23,7 @@
   ],
   "background": {
     "service_worker": "./background/service_worker.js",
-    "type": "module",
-    "scripts": ["./background/service_worker.js"]
+    "type": "module"
   },
   "permissions": ["tabs", "activeTab"]
 }
