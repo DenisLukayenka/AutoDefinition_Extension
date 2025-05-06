@@ -48,11 +48,14 @@ class CardContent {
 
   submitAutoFill() {
     this.autoFillButton.textContent = 'Loading...';
+    const autofillButton = this.autoFillButton;
+    const answerElement = this.answerElement;
+    const questionElement = this.questionElement;
 
     getDefinition(this.answerElement.value)
       .then((definition) => {
         if (!definition) {
-          this.questionElement.value =
+          questionElement.value =
             'Some errors happens, cannot retrieve data from API';
           return;
         }
@@ -62,19 +65,19 @@ class CardContent {
         const sanitizedExample = CardContent.sanitizeExample(example);
 
         CardContent.setTextAreaValue(
-          this.questionElement,
+          questionElement,
           `(${definition.type}) ${definition.definition}\n\"${maskedExample}\"`
         );
 
         CardContent.setTextAreaValue(
-          this.answerElement,
-          `${this.answerElement.value}\n\"${sanitizedExample}\"`
+          answerElement,
+          `${answerElement.value}\n\"${sanitizedExample}\"`
         );
 
-        this.answerElement.focus();
+        answerElement.focus();
       })
       .finally(() => {
-        this.autoFillButton.textContent = 'Auto fill';
+        autofillButton.textContent = 'Auto fill';
       });
   }
 

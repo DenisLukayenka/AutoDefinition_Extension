@@ -13,6 +13,18 @@ navigation.addEventListener('navigate', () => {
   }, 300);
 });
 
+chrome.runtime.onMessage.addListener(function (request) {
+  if (request.type === 'CARDS_LOADED') {
+    console.log('Autofill is going to be resetted!');
+
+    setTimeout(() => {
+      if (bootstrapper) {
+        bootstrapper.resetCards();
+      }
+    }, 100);
+  }
+});
+
 setTimeout(() => {
   CardContent.prototype.placeAutoFillButton = function (
     container,
@@ -43,15 +55,24 @@ class SupermemoAutoFillBootstrap {
   cardContents = [];
   cardsToAdd = 0;
   scrollTicking = false;
+  errorCounter = 0;
 
   static MaxSyncAttempts = 10;
-  static InitialTimeout = 2000;
+  static InitialTimeout = 3000;
   static RetryTimeout = 500;
 
   init(abortController) {
     setTimeout(() => {
-      this.resetCards();
-      this.subscribeOnNewCardAdded(abortController);
+      try {
+        this.subscribeOnNewCardAdded(abortController);
+        this.resetCards();
+      } catch {
+        this.errorCounter++;
+
+        if (this.errorCounter < 3) {
+          this.init(abortController);
+        }
+      }
     }, SupermemoAutoFillBootstrap.InitialTimeout);
   }
 
@@ -89,10 +110,8 @@ class SupermemoAutoFillBootstrap {
         () => {
           if (!this.scrollTicking) {
             window.requestAnimationFrame(() => {
-              setTimeout(() => {
-                this.resetCards();
-                this.scrollTicking = false;
-              }, SupermemoAutoFillBootstrap.InitialTimeout);
+              setTimeout(() => this.resetCards(), 1000);
+              this.scrollTicking = false;
             });
           }
 

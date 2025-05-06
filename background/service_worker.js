@@ -15,3 +15,22 @@ chrome.runtime.onMessage.addListener(function (request, _sender, sendResponse) {
 
   return false;
 });
+
+let currentTab;
+
+chrome.webRequest.onCompleted.addListener(
+  async function (details) {
+    if (details.url.indexOf('pages?limit') > -1) {
+      let [tab] = await chrome.tabs.query({
+        active: true,
+        lastFocusedWindow: true,
+      });
+      if (tab && !currentTab) {
+        currentTab = tab;
+      }
+
+      await chrome.tabs.sendMessage(currentTab.id, { type: 'CARDS_LOADED' });
+    }
+  },
+  { urls: ['https://learn.supermemo.com/*'] }
+);

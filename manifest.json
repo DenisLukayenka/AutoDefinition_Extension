@@ -25,5 +25,6 @@
     "service_worker": "./background/service_worker.js",
     "type": "module"
   },
-  "permissions": ["tabs", "activeTab"]
+  "permissions": ["tabs", "activeTab", "webRequest"],
+  "host_permissions": ["https://learn.supermemo.com/*"]
 }
