@@ -1,3 +1,18 @@
+let bootstrapper = null;
+let abortController = null;
+
+navigation.addEventListener('navigate', () => {
+  if (abortController) {
+    abortController.abort();
+  }
+
+  setTimeout(() => {
+    bootstrapper = new SupermemoAutoFillBootstrap();
+    abortController = new AbortController();
+    bootstrapper.init(abortController);
+  }, 300);
+});
+
 setTimeout(() => {
   CardContent.prototype.placeAutoFillButton = function (
     container,
@@ -22,22 +37,21 @@ setTimeout(() => {
 
     return container;
   };
-
-  new SupermemoAutoFillBootstrap().init();
-}, 3000);
+}, 100);
 
 class SupermemoAutoFillBootstrap {
   cardContents = [];
   cardsToAdd = 0;
+  scrollTicking = false;
 
   static MaxSyncAttempts = 10;
-  static InitialTimeout = 3000;
+  static InitialTimeout = 2000;
   static RetryTimeout = 500;
 
-  init() {
+  init(abortController) {
     setTimeout(() => {
       this.resetCards();
-      this.subscribeOnNewCardAdded();
+      this.subscribeOnNewCardAdded(abortController);
     }, SupermemoAutoFillBootstrap.InitialTimeout);
   }
 
@@ -53,16 +67,41 @@ class SupermemoAutoFillBootstrap {
     this.cardContents = searchCards.map((card) => new CardContent(card));
   }
 
-  subscribeOnNewCardAdded() {
+  subscribeOnNewCardAdded(abortController) {
     // Button rerenders and listener fails
-    document
-      .getElementsByClassName('add-new-element')[0]
-      .addEventListener('click', () => {
+    document.getElementsByClassName('add-new-element')[0].addEventListener(
+      'click',
+      () => {
         setTimeout(() => {
           this.cardsToAdd = this.cardsToAdd + 1;
           this.syncContentElements();
         }, 300);
-      });
+      },
+      {
+        signal: abortController.signal,
+      }
+    );
+
+    document
+      .getElementsByClassName('cdk-virtual-scroll-viewport')[0]
+      .addEventListener(
+        'scroll',
+        () => {
+          if (!this.scrollTicking) {
+            window.requestAnimationFrame(() => {
+              setTimeout(() => {
+                this.resetCards();
+                this.scrollTicking = false;
+              }, SupermemoAutoFillBootstrap.InitialTimeout);
+            });
+          }
+
+          this.scrollTicking = true;
+        },
+        {
+          signal: abortController.signal,
+        }
+      );
   }
 
   searchAllCards() {
